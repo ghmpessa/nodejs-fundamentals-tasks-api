@@ -14,4 +14,17 @@ export class Database {
   #persist() {
     fs.writeFile(dbPath, JSON.stringify(this.#database));
   }
+
+  insert(task) {
+    if (Array.isArray(this.#database)) {
+      if (this.#database.some((item) => item["title"] === task.title))
+        return null;
+      this.#database.push(task);
+    } else {
+      this.#database = [task];
+    }
+    this.#persist();
+
+    return task;
+  }
 }
