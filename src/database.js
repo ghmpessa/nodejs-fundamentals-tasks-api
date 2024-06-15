@@ -31,4 +31,13 @@ export class Database {
 
     return task;
   }
+
+  update(id, data) {
+    const index = this.#database.findIndex((item) => item.id === id);
+
+    if (index >= 0) {
+      this.#database[index] = { id, ...data };
+      this.#persist();
+    }
+  }
 }
