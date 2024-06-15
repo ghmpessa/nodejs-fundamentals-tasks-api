@@ -1,3 +1,4 @@
+import { buildRoutePath } from "../utils/build-route-path.js";
 import { Database } from "./database.js";
 import { randomUUID } from "node:crypto";
 
@@ -6,16 +7,16 @@ const db = new Database();
 export const routes = [
   {
     method: "GET",
-    path: "/tasks",
+    path: buildRoutePath("/tasks"),
     handler: (req, res) => {
-      const data = db.find();
+      const data = db.find("tasks");
 
       res.writeHead(200).end(JSON.stringify({ data }));
     },
   },
   {
     method: "POST",
-    path: "/tasks",
+    path: buildRoutePath("/tasks"),
     handler: (req, res) => {
       const { title, description } = req.body;
 
@@ -31,10 +32,37 @@ export const routes = [
         completedAt: null,
       };
 
-      const response = db.insert(task);
+      const response = db.insert("tasks", task);
 
       if (response) res.writeHead(201).end();
       else res.writeHead(400).end({ error: "Title already exists" });
+    },
+  },
+  {
+    method: "PUT",
+    path: buildRoutePath("/tasks/:id"),
+    handler: (req, res) => {
+      const { id } = req.params;
+      const { title, description } = req.body;
+
+      const task = db.findByID("tasks", id);
+
+      if (!task)
+        return res
+          .writeHead(404)
+          .end(JSON.stringify({ error: "ID provided not founded" }));
+
+      const updatedAt = new Date().toISOString();
+
+      const data = {
+        title,
+        description,
+        updatedAt,
+      };
+
+      const updatedTask = db.update("tasks", id, data);
+
+      res.writeHead(200).end(JSON.stringify(updatedTask));
     },
   },
 ];
