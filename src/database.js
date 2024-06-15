@@ -15,6 +15,10 @@ export class Database {
     fs.writeFile(dbPath, JSON.stringify(this.#database));
   }
 
+  find() {
+    return this.#database ?? [];
+  }
+
   insert(task) {
     if (Array.isArray(this.#database)) {
       if (this.#database.some((item) => item["title"] === task.title))
