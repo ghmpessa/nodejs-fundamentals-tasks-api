@@ -1,8 +1,18 @@
 import { Database } from "./database.js";
+import { randomUUID } from "node:crypto";
 
 const db = new Database();
 
 export const routes = [
+  {
+    method: "GET",
+    path: "/tasks",
+    handler: (req, res) => {
+      const data = db.find();
+
+      res.writeHead(200).end(JSON.stringify({ data }));
+    },
+  },
   {
     method: "POST",
     path: "/tasks",
