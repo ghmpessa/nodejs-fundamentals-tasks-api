@@ -45,6 +45,13 @@ export const routes = [
       const { id } = req.params;
       const { title, description } = req.body;
 
+      if (!title || !description)
+        res
+          .writeHead(400)
+          .end(
+            JSON.stringify({ error: "Title and description are mandatory" })
+          );
+
       const task = db.findByID("tasks", id);
 
       if (!task)
