@@ -53,4 +53,13 @@ export class Database {
       return task;
     }
   }
+
+  delete(table, id) {
+    const index = this.#database[table].findIndex((item) => item.id === id);
+
+    if (index >= 0) {
+      this.#database[table].splice(index, 1);
+      this.#persist;
+    }
+  }
 }
