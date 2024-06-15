@@ -20,6 +20,13 @@ export const routes = [
     handler: (req, res) => {
       const { title, description } = req.body;
 
+      if (!title || !description)
+        return res
+          .writeHead(400)
+          .end(
+            JSON.stringify({ error: "Title and description are mandatory" })
+          );
+
       const createdAt = new Date().toISOString();
       const updatedAt = new Date().toISOString();
 
@@ -45,12 +52,13 @@ export const routes = [
       const { id } = req.params;
       const { title, description } = req.body;
 
-      if (!title || !description)
-        res
-          .writeHead(400)
-          .end(
-            JSON.stringify({ error: "Title and description are mandatory" })
-          );
+      if (!title && !description) {
+        return res.writeHead(400).end(
+          JSON.stringify({
+            error: "Title or description are necessary to update",
+          })
+        );
+      }
 
       const task = db.findByID("tasks", id);
 
@@ -62,10 +70,11 @@ export const routes = [
       const updatedAt = new Date().toISOString();
 
       const data = {
-        title,
-        description,
         updatedAt,
       };
+
+      if (title) data["title"] = title;
+      if (description) data["description"] = description;
 
       const updatedTask = db.update("tasks", id, data);
 
